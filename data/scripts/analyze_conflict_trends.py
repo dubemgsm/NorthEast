@@ -8,9 +8,13 @@ warnings.filterwarnings('ignore')
 print("Loading conflict data...")
 df = pd.read_csv("data/data/conflict_data_nga.csv", low_memory=False)
 
-# Filter for BAY states
+# Filter for BAY states and 2020-2024
 bay_states = ['Borno state', 'Adamawa state', 'Yobe state']
-bay_df = df[df['adm_1'].isin(bay_states)].copy()
+bay_df = df[
+    (df['adm_1'].isin(bay_states)) & 
+    (df['year'] >= 2020) & 
+    (df['year'] <= 2024)
+].copy()
 
 # Convert date columns
 bay_df['date_start'] = pd.to_datetime(bay_df['date_start'], errors='coerce')
