@@ -37,19 +37,20 @@
             <div class="chart-wrapper" style="height: 450px;"><canvas id="popSchoolChart"></canvas></div>
         </div>
         <div class="chart-container full-width">
-            <h3>3. Conflict Intensity vs. School Availability</h3>
-            <div class="chart-wrapper" style="height: 500px;"><canvas id="scatterChart"></canvas></div>
+            <h3>3. Conflict Intensity vs. School Availability (Top 15 Most Violent LGAs)</h3>
+            <p><small>Comparing the number of recent conflict events (red bars) to the number of operational schools (green line) in the hardest-hit areas.</small></p>
+            <div class="chart-wrapper" style="height: 500px;"><canvas id="conflictSchoolChart"></canvas></div>
         </div>
     </div>
 
     <h2>Section 2: Predictive Conflict Patterns</h2>
     <p style="text-align:center; max-width:800px; margin:0 auto 30px;">
-        Analysis of historical conflict events (2003-2024) in the BAY states against public and religious holidays to identify predictive patterns.
+        Analysis of historical conflict events (2020-2024) in the BAY states against public and religious holidays to identify predictive patterns.
     </p>
 
     <div class="dashboard">
         <div class="chart-container">
-            <h3>4. Monthly Seasonality (All Years)</h3>
+            <h3>4. Monthly Seasonality (2020-2024)</h3>
             <p><small>January shows the highest peak, correlating with the dry season which increases mobility.</small></p>
             <div class="chart-wrapper" style="height: 300px;"><canvas id="monthChart"></canvas></div>
         </div>
@@ -87,10 +88,23 @@
             options: { responsive: true, maintainAspectRatio: false, scales: { y: { position: 'left' }, y1: { position: 'right' } } }
         });
 
-        new Chart(document.getElementById('scatterChart'), {
-            type: 'bubble',
-            data: { datasets: [{ label: 'LGAs (Size = Population)', data: [{"x": 1, "y": 231, "r": 11.004, "label": "Demsa (Adamawa)"}, {"x": 0, "y": 249, "r": 12.92, "label": "Fufore (Adamawa)"}, {"x": 0, "y": 278, "r": 10.484, "label": "Ganye (Adamawa)"}, {"x": 0, "y": 203, "r": 8.008, "label": "Girei (Adamawa)"}, {"x": 1, "y": 192, "r": 9.116, "label": "Gombi (Adamawa)"}, {"x": 1, "y": 174, "r": 10.888, "label": "Guyuk (Adamawa)"}, {"x": 3, "y": 263, "r": 10.436, "label": "Hong (Adamawa)"}, {"x": 0, "y": 231, "r": 10.388, "label": "Jada (Adamawa)"}, {"x": 2, "y": 146, "r": 6.864, "label": "Lamurde (Adamawa)"}, {"x": 5, "y": 173, "r": 8.336, "label": "Madagali (Adamawa)"}, {"x": 0, "y": 127, "r": 6.796, "label": "Maiha (Adamawa)"}, {"x": 0, "y": 261, "r": 9.424, "label": "Mayo-Belwa (Adamawa)"}, {"x": 0, "y": 238, "r": 9.576, "label": "Michika (Adamawa)"}, {"x": 0, "y": 163, "r": 9.344, "label": "Mubi North (Adamawa)"}, {"x": 0, "y": 139, "r": 8.016, "label": "Mubi South (Adamawa)"}, {"x": 0, "y": 151, "r": 5.648, "label": "Numan (Adamawa)"}, {"x": 0, "y": 107, "r": 9.16, "label": "Shelleng (Adamawa)"}, {"x": 0, "y": 240, "r": 12.04, "label": "Song (Adamawa)"}, {"x": 0, "y": 86, "r": 3.22, "label": "Toungo (Adamawa)"}, {"x": 0, "y": 161, "r": 12.32, "label": "Yola North (Adamawa)"}, {"x": 0, "y": 198, "r": 12.12, "label": "Yola South (Adamawa)"}, {"x": 66, "y": 0, "r": 5.864, "label": "Abadam (Borno)"}, {"x": 16, "y": 0, "r": 8.4, "label": "Askira/Uba (Borno)"}, {"x": 125, "y": 19, "r": 15.832, "label": "Bama (Borno)"}, {"x": 0, "y": 46, "r": 4.636, "label": "Bayo (Borno)"}, {"x": 19, "y": 104, "r": 10.3, "label": "Biu (Borno)"}, {"x": 18, "y": 51, "r": 3.888, "label": "Chibok (Borno)"}, {"x": 94, "y": 25, "r": 13.668, "label": "Damboa (Borno)"}, {"x": 30, "y": 5, "r": 6.156, "label": "Dikwa (Borno)"}, {"x": 16, "y": 5, "r": 8.868, "label": "Gubio (Borno)"}, {"x": 9, "y": 20, "r": 5.624, "label": "Guzamala (Borno)"}, {"x": 111, "y": 25, "r": 16.208, "label": "Gwoza (Borno)"}, {"x": 1, "y": 134, "r": 7.076, "label": "Hawul (Borno)"}, {"x": 14, "y": 47, "r": 12.256, "label": "Jere (Borno)"}, {"x": 28, "y": 19, "r": 5.276, "label": "Kaga (Borno)"}, {"x": 8, "y": 0, "r": 3.564, "label": "Kala/Balge (Borno)"}, {"x": 59, "y": 18, "r": 9.22, "label": "Konduga (Borno)"}, {"x": 49, "y": 21, "r": 11.916, "label": "Kukawa (Borno)"}, {"x": 0, "y": 53, "r": 3.324, "label": "Kwaya Kusar (Borno)"}, {"x": 48, "y": 8, "r": 6.072, "label": "Mafa (Borno)"}, {"x": 12, "y": 4, "r": 8.22, "label": "Magumeri (Borno)"}, {"x": 6, "y": 85, "r": 31.648, "label": "Maiduguri (Borno)"}, {"x": 62, "y": 0, "r": 7.584, "label": "Marte (Borno)"}, {"x": 39, "y": 4, "r": 6.836, "label": "Mobbar (Borno)"}, {"x": 35, "y": 7, "r": 6.436, "label": "Monguno (Borno)"}, {"x": 45, "y": 9, "r": 13.86, "label": "Ngala (Borno)"}, {"x": 17, "y": 4, "r": 5.808, "label": "Nganzai (Borno)"}, {"x": 0, "y": 63, "r": 5.92, "label": "Shani (Borno)"}, {"x": 2, "y": 80, "r": 8.792, "label": "Bade (Yobe)"}, {"x": 2, "y": 80, "r": 6.9, "label": "Bursari (Yobe)"}, {"x": 6, "y": 63, "r": 5.516, "label": "Damaturu (Yobe)"}, {"x": 0, "y": 139, "r": 8.6, "label": "Fika (Yobe)"}, {"x": 1, "y": 137, "r": 18.988, "label": "Fune (Yobe)"}, {"x": 24, "y": 49, "r": 9.796, "label": "Geidam (Yobe)"}, {"x": 39, "y": 42, "r": 8.164, "label": "Gujba (Yobe)"}, {"x": 0, "y": 68, "r": 6.508, "label": "Gulani (Yobe)"}, {"x": 0, "y": 94, "r": 14.62, "label": "Jakusko (Yobe)"}, {"x": 1, "y": 53, "r": 6.636, "label": "Karasuwa (Yobe)"}, {"x": 0, "y": 35, "r": 3.836, "label": "Machina (Yobe)"}, {"x": 0, "y": 93, "r": 5.504, "label": "Nangere (Yobe)"}, {"x": 0, "y": 95, "r": 9.476, "label": "Nguru (Yobe)"}, {"x": 0, "y": 118, "r": 12.884, "label": "Potiskum (Yobe)"}, {"x": 5, "y": 45, "r": 4.884, "label": "Tarmuwa (Yobe)"}, {"x": 6, "y": 44, "r": 7.92, "label": "Yunusari (Yobe)"}, {"x": 0, "y": 72, "r": 6.964, "label": "Yusufari (Yobe)"}], backgroundColor: 'rgba(253, 126, 20, 0.6)' }] },
-            options: { responsive: true, maintainAspectRatio: false }
+        new Chart(document.getElementById('conflictSchoolChart'), {
+            type: 'bar',
+            data: {
+                labels: ["Bama (Borno)", "Gwoza (Borno)", "Damboa (Borno)", "Konduga (Borno)", "Kukawa (Borno)", "Abadam (Borno)", "Marte (Borno)", "Ngala (Borno)", "Mafa (Borno)", "Mobbar (Borno)", "Dikwa (Borno)", "Monguno (Borno)", "Gujba (Yobe)", "Kaga (Borno)", "Magumeri (Borno)"],
+                datasets: [
+                    { label: 'Conflict Events (2020-2024)', data: [152, 146, 113, 96, 92, 86, 75, 73, 61, 50, 47, 45, 45, 37, 29], backgroundColor: 'rgba(220, 53, 69, 0.7)', yAxisID: 'y' },
+                    { label: 'Open Schools', data: [19, 25, 25, 18, 21, 0, 0, 9, 8, 4, 5, 7, 42, 19, 4], type: 'line', borderColor: '#28a745', backgroundColor: '#28a745', borderWidth: 3, tension: 0.1, yAxisID: 'y1' }
+                ]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: { 
+                    y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Conflict Events' } },
+                    y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Number of Schools' }, grid: { drawOnChartArea: false } }
+                } 
+            }
         });
 
         // --- Conflict Pattern Charts ---
@@ -98,7 +112,7 @@
             type: 'line',
             data: {
                 labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                datasets: [{ label: 'Total Historical Conflicts', data: [468, 384, 362, 339, 327, 338, 348, 331, 359, 356, 372, 333], borderColor: '#6f42c1', backgroundColor: 'rgba(111, 66, 193, 0.2)', fill: true, tension: 0.3 }]
+                datasets: [{ label: 'Total Historical Conflicts', data: [222, 138, 128, 136, 114, 112, 107, 132, 137, 144, 147, 124], borderColor: '#6f42c1', backgroundColor: 'rgba(111, 66, 193, 0.2)', fill: true, tension: 0.3 }]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
@@ -109,7 +123,7 @@
                 labels: ["3 Days Before", "2 Days Before", "1 Day Before", "On the Day", "1 Day After", "2 Days After", "3 Days After"],
                 datasets: [{ 
                     label: 'Conflict Events', 
-                    data: [215, 136, 120, 109, 73, 114, 99], 
+                    data: [68, 55, 42, 43, 29, 33, 28], 
                     backgroundColor: ['#dc3545', '#ffc107', '#ffc107', '#28a745', '#17a2b8', '#17a2b8', '#17a2b8'] 
                 }]
             },
@@ -119,11 +133,22 @@
         new Chart(document.getElementById('holidayChart'), {
             type: 'bar',
             data: {
-                labels: ["Start of Ramadan", "Id el Maulud", "Good Friday", "Christmas Day", "Id el Fitr"],
-                datasets: [{ label: 'Conflict Events (Within 7-day window)', data: [98, 86, 82, 75, 74], backgroundColor: '#6610f2' }]
+                labels: ["Start of Ramadan", "Good Friday", "Democracy Day", "Christmas Day", "Id el Maulud"],
+                datasets: [{ label: 'Conflict Events (Within 7-day window)', data: [39, 30, 28, 28, 26], backgroundColor: '#6610f2' }]
             },
             options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
         });
     </script>
+
+    <div style="max-width: 1200px; margin: 40px auto 20px; padding: 20px; background: #e9ecef; border-radius: 8px; font-size: 0.9em; color: #555;">
+        <h3 style="margin-top: 0; color: #333;">Data Sources</h3>
+        <ul style="margin-bottom: 0; padding-left: 20px;">
+            <li><b>School Locations & Coordinates:</b> GRID3 (Geo-Referenced Infrastructure and Demographic Data for Development), circa 2018-2020.</li>
+            <li><b>School Operational Status:</b> iMMAP / Nigeria Education Cluster, "North East Nigeria School List", Status as of June 2019. (Available via Humanitarian Data Exchange).</li>
+            <li><b>Population Data:</b> National Bureau of Statistics (NBS) & National Population Commission (NPC), 2022 LGA Population Projections.</li>
+            <li><b>Conflict Data:</b> ACLED (Armed Conflict Location & Event Data Project) / UCDP (Uppsala Conflict Data Program). Filtered for events occurring between January 1, 2020, and December 31, 2024.</li>
+            <li><b>IDP Locations:</b> IOM DTM (Displacement Tracking Matrix) Nigeria, Site Assessment Round 50, April 2026.</li>
+        </ul>
+    </div>
 </body>
 </html>

@@ -23,18 +23,19 @@ chart2_pop = top_20_pop['Population'].tolist()
 chart2_open = top_20_pop['Open_Schools'].tolist()
 chart2_closed = top_20_pop['Closed_Schools'].tolist()
 
-scatter_data = []
-for _, row in df.iterrows():
-    scatter_data.append({
-        'x': row['Conflict_Events'],
-        'y': row['Open_Schools'],
-        'r': max(row['Population'] / 25000, 3),
-        'label': f"{row['LGA']} ({row['State']})"
-    })
+# Chart 3: Top 15 LGAs by Conflict Intensity vs Open Schools
+top_15_conflict = df.nlargest(15, 'Conflict_Events')[['LGA', 'State', 'Conflict_Events', 'Open_Schools']]
+chart3_labels = [f"{row['LGA']} ({row['State']})" for _, row in top_15_conflict.iterrows()]
+chart3_conflict = top_15_conflict['Conflict_Events'].tolist()
+chart3_schools = top_15_conflict['Open_Schools'].tolist()
 
 # --- 2. New Conflict Trend Analysis ---
 bay_states = ['Borno state', 'Adamawa state', 'Yobe state']
-bay_conflicts = conflict_df[conflict_df['adm_1'].isin(bay_states)].copy()
+bay_conflicts = conflict_df[
+    (conflict_df['adm_1'].isin(bay_states)) & 
+    (conflict_df['year'] >= 2020) & 
+    (conflict_df['year'] <= 2024)
+].copy()
 bay_conflicts['date_start'] = pd.to_datetime(bay_conflicts['date_start'], errors='coerce')
 bay_conflicts = bay_conflicts.dropna(subset=['date_start'])
 bay_conflicts['year'] = bay_conflicts['date_start'].dt.year
@@ -124,19 +125,20 @@ html_template = f"""<!DOCTYPE html>
             <div class="chart-wrapper" style="height: 450px;"><canvas id="popSchoolChart"></canvas></div>
         </div>
         <div class="chart-container full-width">
-            <h3>3. Conflict Intensity vs. School Availability</h3>
-            <div class="chart-wrapper" style="height: 500px;"><canvas id="scatterChart"></canvas></div>
+            <h3>3. Conflict Intensity vs. School Availability (Top 15 Most Violent LGAs)</h3>
+            <p><small>Comparing the number of recent conflict events (red bars) to the number of operational schools (green line) in the hardest-hit areas.</small></p>
+            <div class="chart-wrapper" style="height: 500px;"><canvas id="conflictSchoolChart"></canvas></div>
         </div>
     </div>
 
     <h2>Section 2: Predictive Conflict Patterns</h2>
     <p style="text-align:center; max-width:800px; margin:0 auto 30px;">
-        Analysis of historical conflict events (2003-2024) in the BAY states against public and religious holidays to identify predictive patterns.
+        Analysis of historical conflict events (2020-2024) in the BAY states against public and religious holidays to identify predictive patterns.
     </p>
 
     <div class="dashboard">
         <div class="chart-container">
-            <h3>4. Monthly Seasonality (All Years)</h3>
+            <h3>4. Monthly Seasonality (2020-2024)</h3>
             <p><small>January shows the highest peak, correlating with the dry season which increases mobility.</small></p>
             <div class="chart-wrapper" style="height: 300px;"><canvas id="monthChart"></canvas></div>
         </div>
@@ -174,10 +176,23 @@ html_template = f"""<!DOCTYPE html>
             options: {{ responsive: true, maintainAspectRatio: false, scales: {{ y: {{ position: 'left' }}, y1: {{ position: 'right' }} }} }}
         }});
 
-        new Chart(document.getElementById('scatterChart'), {{
-            type: 'bubble',
-            data: {{ datasets: [{{ label: 'LGAs (Size = Population)', data: {json.dumps(scatter_data)}, backgroundColor: 'rgba(253, 126, 20, 0.6)' }}] }},
-            options: {{ responsive: true, maintainAspectRatio: false }}
+        new Chart(document.getElementById('conflictSchoolChart'), {{
+            type: 'bar',
+            data: {{
+                labels: {json.dumps(chart3_labels)},
+                datasets: [
+                    {{ label: 'Conflict Events (2020-2024)', data: {json.dumps(chart3_conflict)}, backgroundColor: 'rgba(220, 53, 69, 0.7)', yAxisID: 'y' }},
+                    {{ label: 'Open Schools', data: {json.dumps(chart3_schools)}, type: 'line', borderColor: '#28a745', backgroundColor: '#28a745', borderWidth: 3, tension: 0.1, yAxisID: 'y1' }}
+                ]
+            }},
+            options: {{ 
+                responsive: true, maintainAspectRatio: false,
+                interaction: {{ mode: 'index', intersect: false }},
+                scales: {{ 
+                    y: {{ type: 'linear', display: true, position: 'left', title: {{ display: true, text: 'Conflict Events' }} }},
+                    y1: {{ type: 'linear', display: true, position: 'right', title: {{ display: true, text: 'Number of Schools' }}, grid: {{ drawOnChartArea: false }} }}
+                }} 
+            }}
         }});
 
         // --- Conflict Pattern Charts ---
@@ -212,6 +227,17 @@ html_template = f"""<!DOCTYPE html>
             options: {{ responsive: true, maintainAspectRatio: false, indexAxis: 'y' }}
         }});
     </script>
+
+    <div style="max-width: 1200px; margin: 40px auto 20px; padding: 20px; background: #e9ecef; border-radius: 8px; font-size: 0.9em; color: #555;">
+        <h3 style="margin-top: 0; color: #333;">Data Sources</h3>
+        <ul style="margin-bottom: 0; padding-left: 20px;">
+            <li><b>School Locations & Coordinates:</b> GRID3 (Geo-Referenced Infrastructure and Demographic Data for Development), circa 2018-2020.</li>
+            <li><b>School Operational Status:</b> iMMAP / Nigeria Education Cluster, "North East Nigeria School List", Status as of June 2019. (Available via Humanitarian Data Exchange).</li>
+            <li><b>Population Data:</b> National Bureau of Statistics (NBS) & National Population Commission (NPC), 2022 LGA Population Projections.</li>
+            <li><b>Conflict Data:</b> ACLED (Armed Conflict Location & Event Data Project) / UCDP (Uppsala Conflict Data Program). Filtered for events occurring between January 1, 2020, and December 31, 2024.</li>
+            <li><b>IDP Locations:</b> IOM DTM (Displacement Tracking Matrix) Nigeria, Site Assessment Round 50, April 2026.</li>
+        </ul>
+    </div>
 </body>
 </html>
 """
