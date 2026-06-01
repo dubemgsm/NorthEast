@@ -84,6 +84,30 @@ top_holidays = bay_conflicts['holiday_name'].value_counts().head(5)
 chart6_labels = top_holidays.index.tolist()
 chart6_data = [int(x) for x in top_holidays.values.tolist()]
 
+# --- 3. Predictive Risk Analysis ---
+bay_conflicts['total_deaths'] = bay_conflicts['deaths_a'] + bay_conflicts['deaths_b'] + bay_conflicts['deaths_civilians']
+recent_cutoff = pd.to_datetime('2023-07-01')
+bay_conflicts['is_recent'] = bay_conflicts['date_start'] >= recent_cutoff
+
+# LGA Risk
+lga_risk = bay_conflicts.groupby(['adm_1', 'adm_2']).agg(
+    total_events=('id', 'count'), recent_events=('is_recent', 'sum'), total_deaths=('total_deaths', 'sum')
+).reset_index()
+lga_risk['risk_score'] = (lga_risk['recent_events'] * 2) + lga_risk['total_events'] + (lga_risk['total_deaths'] / 10)
+lga_risk = lga_risk.sort_values(by='risk_score', ascending=False).head(10)
+chart7_labels = [f"{row['adm_2']} ({row['adm_1'].replace(' state', '')})" for _, row in lga_risk.iterrows()]
+chart7_data = [float(x) for x in lga_risk['risk_score'].tolist()]
+
+# Town Risk
+towns_df = bay_conflicts[bay_conflicts['where_prec'] <= 2]
+town_risk = towns_df.groupby(['adm_1', 'adm_2', 'where_coordinates']).agg(
+    total_events=('id', 'count'), recent_events=('is_recent', 'sum'), total_deaths=('total_deaths', 'sum')
+).reset_index()
+town_risk['risk_score'] = (town_risk['recent_events'] * 2) + town_risk['total_events'] + (town_risk['total_deaths'] / 10)
+town_risk = town_risk.sort_values(by='risk_score', ascending=False).head(10)
+chart8_labels = [f"{row['where_coordinates']} ({row['adm_1'].replace(' state', '')})" for _, row in town_risk.iterrows()]
+chart8_data = [float(x) for x in town_risk['risk_score'].tolist()]
+
 
 # --- HTML Template ---
 html_template = f"""<!DOCTYPE html>
@@ -153,6 +177,25 @@ html_template = f"""<!DOCTYPE html>
             <h3>6. Top 5 High-Risk Holidays / Events</h3>
             <p><small>The specific holidays and periods that see the highest concentration of conflict in their 7-day window.</small></p>
             <div class="chart-wrapper" style="height: 350px;"><canvas id="holidayChart"></canvas></div>
+        </div>
+    </div>
+
+    <h2>Section 3: High-Risk Hotspots (Predictive)</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px;">
+        Risk scores calculated based on recent momentum (last 18 months), total historical frequency (2020-2024), and overall intensity (fatalities).
+    </p>
+
+    <div class="dashboard">
+        <div class="chart-container">
+            <h3>7. Top 10 High-Risk LGAs</h3>
+            <p><small>Broader regional areas predicted to be most susceptible to continued conflict.</small></p>
+            <div class="chart-wrapper" style="height: 400px;"><canvas id="lgaRiskChart"></canvas></div>
+        </div>
+
+        <div class="chart-container">
+            <h3>8. Top 10 High-Risk Towns / Settlements</h3>
+            <p><small>Specific, localized targets showing sustained or recent spikes in violence.</small></p>
+            <div class="chart-wrapper" style="height: 400px;"><canvas id="townRiskChart"></canvas></div>
         </div>
     </div>
 
@@ -226,9 +269,43 @@ html_template = f"""<!DOCTYPE html>
             }},
             options: {{ responsive: true, maintainAspectRatio: false, indexAxis: 'y' }}
         }});
+
+        // --- Predictive Risk Charts ---
+        new Chart(document.getElementById('lgaRiskChart'), {{
+            type: 'bar',
+            data: {{
+                labels: {json.dumps(chart7_labels)},
+                datasets: [{{ label: 'Calculated Risk Score', data: {json.dumps(chart7_data)}, backgroundColor: 'rgba(220, 53, 69, 0.85)' }}]
+            }},
+            options: {{ responsive: true, maintainAspectRatio: false, indexAxis: 'y' }}
+        }});
+
+        new Chart(document.getElementById('townRiskChart'), {{
+            type: 'bar',
+            data: {{
+                labels: {json.dumps(chart8_labels)},
+                datasets: [{{ label: 'Calculated Risk Score', data: {json.dumps(chart8_data)}, backgroundColor: 'rgba(253, 126, 20, 0.85)' }}]
+            }},
+            options: {{ responsive: true, maintainAspectRatio: false, indexAxis: 'y' }}
+        }});
     </script>
 
-    <div style="max-width: 1200px; margin: 40px auto 20px; padding: 20px; background: #e9ecef; border-radius: 8px; font-size: 0.9em; color: #555;">
+    <div style="max-width: 1200px; margin: 40px auto 20px; padding: 20px; background: #fff; border-left: 5px solid #17a2b8; border-radius: 4px; font-size: 1.05em; color: #333; line-height: 1.6; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; color: #17a2b8;">Context & Conclusion</h3>
+        <p>Children in conflict-affected regions of North-East Nigeria—particularly Borno, Adamawa, and Yobe (BAY) states—face severe and uneven barriers to education access. Armed conflict trigged by Boko Haram which means Western Education is prohibited in Hausa has damaged school infrastructure, displaced millions of people, and created persistent insecurity that limits safe access to existing schools.</p>
+        <p>While education actors, including EBI, maintain strong field presence and local relationships, decision-making about where to prioritise interventions remains constrained by fragmented information flows and limited system-wide visibility.<br>
+        This dashboard provides systemic, data-driven analysis at a glance to suggest priority intervention zones.<br>
+        It also highlights <b>when</b> armed conflict can occur and <b>where</b> it is highly likely to occur.</p>
+        
+        <h4 style="margin-bottom: 5px;">Methodology Notes</h4>
+        <ul style="margin-top: 5px; padding-left: 20px;">
+            <li><strong>Education Access Gap:</strong> Calculated by dividing the 2022 LGA population projections by the number of currently operational schools in that LGA.</li>
+            <li><strong>Predictive Risk Score:</strong> Derived from conflict event data (2020-2024). The formula heavily weights recent momentum (attacks in the last 18 months count double) and overall intensity (adding a fraction of total fatalities) to historical frequency.</li>
+            <li><strong>Holiday Trends:</strong> Analyzed using a 7-day window (3 days prior, the day of, and 3 days post-event) around major recognized public and religious holidays in Nigeria to identify tactical spikes.</li>
+        </ul>
+    </div>
+
+    <div style="max-width: 1200px; margin: 20px auto; padding: 20px; background: #e9ecef; border-radius: 8px; font-size: 0.9em; color: #555;">
         <h3 style="margin-top: 0; color: #333;">Data Sources</h3>
         <ul style="margin-bottom: 0; padding-left: 20px;">
             <li><b>School Locations & Coordinates:</b> GRID3 (Geo-Referenced Infrastructure and Demographic Data for Development), circa 2018-2020.</li>
