@@ -135,6 +135,8 @@ html_template = f"""<!DOCTYPE html>
 <body>
 
     <a href="index.html" class="nav-btn">🔙 Back to Map</a>
+    <a href="https://github.com/dubemgsm/NorthEast" class="nav-btn" target="_blank" style="background-color: #333; margin-left: 10px;">📦 View Github Repository</a>
+    <a href="More/test_locations.html" class="nav-btn" style="background-color: #17a2b8; margin-left: 10px;">🌍 Test for other locations</a>
     
     <h1>Deep Dive: Education & Vulnerability Analysis</h1>
     

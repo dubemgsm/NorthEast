@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test for Other Locations</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 40px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #495057; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        .btn { display: inline-block; padding: 12px 20px; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; transition: background 0.3s; }
+        .btn-primary { background-color: #007bff; width: 100%; }
+        .btn-primary:hover { background-color: #0056b3; }
+        .btn-secondary { background-color: #6c757d; margin-right: 10px; }
+        .nav-buttons { margin-bottom: 30px; text-align: center; }
+        .loading { display: none; text-align: center; margin-top: 20px; color: #007bff; font-weight: bold; }
+        .config-area { margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; font-size: 0.9em; }
+        .config-area h4 { margin-top: 0; color: #856404; }
+        .config-area code { background: white; padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+        .input-hint { font-size: 0.8em; color: #6c757d; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="nav-buttons">
+        <a href="../index.html" class="btn btn-secondary">🏠 Home</a>
+        <a href="../deep_dive.html" class="btn btn-secondary">📊 Deep Dive</a>
+    </div>
+
+    <div class="container">
+        <h1>🌍 Test Other Locations</h1>
+        
+        <div class="config-area">
+            <h4>⚠️ Configuration Required</h4>
+            <p>To use this feature in a Codespace, you must provide the <strong>Public URL</strong> for port <strong>5000</strong>.</p>
+            <ol>
+                <li>Go to the <strong>Ports</strong> tab in your terminal.</li>
+                <li>Find port <strong>5000</strong>.</li>
+                <li>Right-click it -> <strong>Port Visibility</strong> -> <strong>Public</strong>.</li>
+                <li>Copy the <strong>Forwarded Address</strong> and paste it below.</li>
+            </ol>
+            <div class="form-group">
+                <label for="apiUrl">Port 5000 Forwarded URL</label>
+                <input type="text" id="apiUrl" placeholder="https://...-5000.app.github.dev" oninput="saveApiUrl()">
+                <div class="input-hint">Default: <code>http://localhost:5000</code></div>
+            </div>
+        </div>
+
+        <form id="locationForm" style="margin-top: 20px;">
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" placeholder="e.g. Nigeria" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State or Subregion</label>
+                <input type="text" id="state" placeholder="e.g. Kano" required>
+            </div>
+            <div class="form-group" style="display: flex; gap: 15px;">
+                <div style="flex: 1;">
+                    <label for="startYear">Start Year</label>
+                    <select id="startYear">
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label for="endYear">End Year</label>
+                    <select id="endYear">
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                        <option value="2024" selected>2024</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="submitBtn">🚀 Submit Analysis</button>
+        </form>
+
+        <div id="loading" class="loading">⏳ Processing data and generating maps...</div>
+    </div>
+
+    <script>
+        // Load saved API URL
+        const savedUrl = localStorage.getItem('vulnerability_api_url');
+        if (savedUrl) {
+            document.getElementById('apiUrl').value = savedUrl;
+        }
+
+        function saveApiUrl() {
+            const url = document.getElementById('apiUrl').value.trim();
+            localStorage.setItem('vulnerability_api_url', url);
+        }
+
+        document.getElementById('locationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            
+            let baseUrl = document.getElementById('apiUrl').value.trim() || 'http://localhost:5000';
+            // Ensure no trailing slash
+            baseUrl = baseUrl.replace(/\/$/, "");
+            const finalUrl = `${baseUrl}/generate`;
+            
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+
+            const payload = {
+                country: document.getElementById('country').value.trim(),
+                state: document.getElementById('state').value.trim(),
+                start: document.getElementById('startYear').value,
+                end: document.getElementById('endYear').value
+            };
+
+            fetch(finalUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert('Error generating analysis.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(`Connection to server failed.\n\nTarget URL: ${finalUrl}\n\n1. Ensure port 5000 is Public in the Ports tab.\n2. Ensure the Forwarded Address is pasted correctly above.\n3. Ensure the Python server is running (python3 More/app.py).`);
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

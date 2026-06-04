@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis: Greater Accra, Ghana</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .nav-panel { margin-bottom: 20px; display: flex; gap: 10px; }
+        .btn { padding: 10px 15px; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; background: #6c757d; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        canvas { max-height: 400px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="nav-panel">
+        <a href="../index.html" class="btn">🏠 Home</a>
+        <a href="../deep_dive.html" class="btn">📊 Deep Dive</a>
+        <a href="results_map.html" class="btn" style="background: #007bff;">🗺️ Back to Result Map</a>
+    </div>
+    <h1>📊 Vulnerability Analysis: Greater Accra, Ghana</h1>
+    <p>Data Range: 2020 - 2024</p>
+
+    <div class="card">
+        <h3>Conflict Events vs. Estimated Population Impact</h3>
+        <canvas id="chart1"></canvas>
+    </div>
+
+    <div class="card">
+        <h3>Risk Distribution by Sub-district</h3>
+        <canvas id="chart2"></canvas>
+    </div>
+</div>
+<script>
+    new Chart(document.getElementById('chart1'), {
+        type: 'line',
+        data: {
+            labels: [2020, 2021, 2022, 2023, 2024],
+            datasets: [{
+                label: 'Conflict Events',
+                data: [11, 33, 50, 53, 31],
+                borderColor: 'red',
+                fill: false
+            }, {
+                label: 'Pop Risk Index',
+                data: [67, 35, 45, 53, 63],
+                borderColor: 'blue',
+                fill: false
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('chart2'), {
+        type: 'bar',
+        data: {
+            labels: ["District 1", "District 2", "District 3", "District 4", "District 5"],
+            datasets: [{
+                label: 'Vulnerability Score',
+                data: [0.25966335721491235, 0.6739648755760403, 0.327658558740065, 0.8177696347629729, 0.40739232234540823],
+                backgroundColor: 'orange'
+            }]
+        }
+    });
+</script>
+</body>
+</html>
